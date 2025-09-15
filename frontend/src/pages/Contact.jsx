@@ -1,5 +1,6 @@
 
 import { useState } from "react";
+import { FaGithub, FaLinkedin, FaWhatsapp } from "react-icons/fa";
 const Contact = () => {
   const[formData, setFormData] = useState({
     name:'',
@@ -56,16 +57,16 @@ const Contact = () => {
               <a
                 href="https://github.com/Ashish-gupta2006/"
                 target="_blank"
-                className="hover:text-blue-600"
+                className="hover:text-blue-600 text-2xl"
               >
-                GitHub
+               <FaGithub/>
               </a>
               <a
                 href="https://www.linkedin.com/in/ashish-gupta2006/"
                 target="_blank"
-                className="hover:text-blue-600"
+                className="hover:text-blue-600 text-2xl"
               >
-                LinkedIn
+                <FaLinkedin/>
               </a>
             </div>
           </div>

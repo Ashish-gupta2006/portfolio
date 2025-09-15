@@ -26,6 +26,7 @@ const Education = () => {
       description:
         "Completed my high school education with a focus on foundational science and mathematics.",
     },
+    
   ];
 
   return (
@@ -49,7 +50,7 @@ const Education = () => {
             <p className="text-gray-600 font-medium">{edu.institution}</p>
             <p className="text-sm text-gray-500 italic">{edu.year}</p>
             <p className="mt-3 text-gray-700 leading-relaxed">
-              {edu.description}
+              {edu.description} 
             </p>
           </div>
         ))}

@@ -24,6 +24,7 @@ const Navbar = () => {
             <Link to="/education" className="hover:text-gray-300">
               Education
             </Link>
+            <Link to='/certification' className='hover:text-gray-300'>Certifications</Link>
             <Link to="/skills" className='hover:text-gray-300'> Skills</Link>
             <Link to="/project" className='hover:text-gray-300'> Project</Link>
             <Link to="/contact" className='hover:text-gray-300'> Contact</Link>
@@ -60,6 +61,11 @@ const Navbar = () => {
           >
             Education
           </Link>
+          <Link 
+          to='/certification' 
+          className='hover:bg-gray-300'
+          onClick={()=>setIsOpen(false)}
+          >Certifications</Link>
           <Link
             to="skills"
             className="hover:text-gray-300"

@@ -19,9 +19,9 @@ import AddTools from "./pages/admin/AddTools.jsx";
 import ChangePassword from "./pages/admin/ChangePassword.jsx";
 import Certification from "./pages/Certification.jsx";
 import AddResume from "./pages/admin/Addresume.jsx";
-
+import ProtectRoute from "./pages/ProtectRoute.jsx";
 const App = () => {
-  return ( 
+  return (
     <BrowserRouter>
       <div>
         <Navbar />
@@ -33,17 +33,19 @@ const App = () => {
         <Route path="/skills" element={<Skills />} />
         <Route path="/project" element={<Project />} />
         <Route path="/contact" element={<Contact />} />
-        <Route path="/certification" element={<Certification/>}/>
-        <Route path="/portfolio-admin" element={<DashboardTemplet />} >
-          <Route path="dashboard" element={<Dashboard/>}/>
-          <Route path="profile" element={<ProfileData/>}/>
-          <Route path="certificate" element={<AddCertificate/>}/>
-          <Route path="education" element={<AddEducation/>}/>
-          <Route path="project" element={<AddProject/>}/>
-          <Route path="skills" element={<AddSkills/>}/>
-          <Route path="tools" element={<AddTools/>}/>
-          <Route path="resume" element={<AddResume/>}/>
-          <Route path="change-password" element={<ChangePassword/>}/>
+        <Route path="/certification" element={<Certification />} />
+        <Route element={<ProtectRoute/>}>
+          <Route path="/portfolio-admin" element={<DashboardTemplet />}>
+            <Route index element={<Dashboard />} />
+            <Route path="profile" element={<ProfileData />} />
+            <Route path="certificate" element={<AddCertificate />} />
+            <Route path="education" element={<AddEducation />} />
+            <Route path="project" element={<AddProject />} />
+            <Route path="skills" element={<AddSkills />} />
+            <Route path="tools" element={<AddTools />} />
+            <Route path="resume" element={<AddResume />} />
+            <Route path="change-password" element={<ChangePassword />} />
+          </Route>
         </Route>
         <Route path="/*" element={<NotFound />} />
       </Routes>

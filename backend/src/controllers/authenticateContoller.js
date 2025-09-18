@@ -6,7 +6,7 @@ const Token = require('../models/token.js');
 const handleLogin = async (req, res) => {
   try {
     const { email, password } = req.body;
-    const admin = await Admin.findOne({ email });
+    const admin = await Admin.findOne({ email:email });
     if (!admin) {
       return res.status(400).json({
         success: false,
@@ -18,22 +18,24 @@ const handleLogin = async (req, res) => {
     if (!isMatch) {
       return res.status(400).json({
         success: false,
-        message: "Email or password is incorrect",
+        message: "password is incorrect",
       });
     }
 
     const token = jwt.sign({ id: admin._id }, process.env.JWT_SECRET, {
-      expiresIn: "1h",
+      expiresIn: "1d",
     });
 
     await Token.create({ userId: admin._id, token });
 
-    res.cookie("jwt", token, {
-      httpOnly: true,
-      secure: process.env.NODE_ENV === "production",
-      sameSite: "strict",
-      maxAge: 1 * 60 * 60 * 1000,
-    });
+ res.cookie("twt", token, {
+   httpOnly: true, 
+   signed: true, 
+   secure: false, 
+   sameSite: "lax", 
+   maxAge: 24 * 60 * 60 * 1000,
+ });
+
 
     res.status(200).json({
       success: true,
@@ -49,5 +51,13 @@ const handleLogin = async (req, res) => {
   }
 };
 
+const handleLogout = (req, res)=>{
+  try {
+    
+  } catch (error) {
+    
+  }
+}
 
-module.exports = handleLogin;
+
+module.exports = { handleLogin, handleLogout};

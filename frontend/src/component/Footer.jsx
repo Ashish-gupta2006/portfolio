@@ -4,7 +4,7 @@ import {Link} from 'react-router-dom'
 const Footer = () => {
   return (
     <footer className="bg-gray-900 text-white w-full ">
-      <div className="max-w-6xl mx-auto px-6 py-10 grid grid-cols-1 md:grid-cols-3 gap-8">
+      <div className="max-w-6xl mx-auto px-6 py-10 grid grid-cols-1 md:grid-cols-3 gap-8  text-center">
         <div>
           <h2 className="text-xl font-bold mb-4">Ashish Gupta</h2>
         </div>
@@ -26,14 +26,14 @@ const Footer = () => {
         </div>
 
         {/* Social Media */}
-        <div>
+        <div >
           <h2 className="text-xl font-bold mb-4">Follow Me</h2>
-          <div className="flex space-x-4">
+          <div className="flex space-x-4 justify-center">
             <a
               href="https://github.com/Ashish-gupta2006/"
               target="_blank"
               rel="noopener noreferrer"
-              className="text-gray-300 hover:text-white text-2xl transition"
+              className="text-gray-300 hover:text-white text-2xl transition "
             >
               <FaGithub />
             </a>

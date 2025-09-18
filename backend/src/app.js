@@ -1,50 +1,48 @@
-require('dotenv').config({path:'../.env'});
-const express = require('express');
+require("dotenv").config({ path: "../.env" });
+const express = require("express");
 const app = express();
 const cors = require("cors");
-const connectDB = require('./config/mongodbCon.js')
-const adminRoute = require('./routes/admin.js');
-const cookieParser = require('cookie-parser');
-const Admin = require('./models/admin.js');
-const bcrypt = require('bcryptjs')
-const handleLogin = require("./controllers/loginController.js");
-const Token = require('./models/token.js');
-// cross-origin resource share
+const cookieParser = require("cookie-parser");
+const connectDB = require("./config/mongodbCon.js");
 
-app.use(cors({
-  origin: process.env.FRONTEND_URL, // No trailing slash
-  credentials: true,
-}));
+const adminRoute = require("./routes/admin.js");
+const authenticateRoute = require("./routes/authenticate.js");
+const registerationRoute = require("./routes/registration.js");
+const verifyToken = require("./middlewares/verifyToken.js");
+const userMessageRoute = require('./routes/userMessage.js')
+// ✅ Correct CORS setup
+app.use(
+  cors({
+    origin: process.env.FRONTEND_URL, 
+    credentials: true, 
+  })
+);
+
+// ✅ Middleware
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-app.use(cookieParser(`${process.env.COOKIE_PARSER}`));
+app.use(cookieParser(process.env.COOKIE_PARSER));
+
+// ✅ Connect DB
 connectDB();
 
-app.get("/", (req, res)=>{
-  res.send('server is listen ');
-});
-
-app.use('/admin',adminRoute);
-
-app.post('/register',async(req, res)=>{
-  const{name, email, password}= req.body;
-  const salt = await bcrypt.genSalt(10);
-  const hashedPassword = await bcrypt.hash(password, salt);
-  const newAdmin = new Admin({
-    name:name,
-    email:email,
-    password:hashedPassword,
-  });
-
-   const data = await newAdmin.save();
+// ✅ Verify token route
+app.get("/verify-token", verifyToken, (req, res) => {
   res.status(200).json({
-    message:data
-  })
-
+    success: true,
+    message: "Token verified successfully",
+    user: req.user,
+  });
 });
 
-app.use("/login", handleLogin);
+// Routes
+app.use("/admin",adminRoute);
+app.use("/register", registerationRoute);
+app.use("/login", authenticateRoute);
+app.use("/logout", authenticateRoute);
+app.use("/user", userMessageRoute);
+
 
 app.listen(process.env.PORT, () => {
-  console.log(`Server is listen on http://localhost:${process.env.PORT}`);
+  console.log(`Server is listening on http://localhost:${process.env.PORT}`);
 });

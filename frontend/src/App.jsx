@@ -20,6 +20,7 @@ import ChangePassword from "./pages/admin/ChangePassword.jsx";
 import Certification from "./pages/Certification.jsx";
 import AddResume from "./pages/admin/Addresume.jsx";
 import ProtectRoute from "./pages/ProtectRoute.jsx";
+import Login from './pages/Login.jsx'
 const App = () => {
   return (
     <BrowserRouter>
@@ -34,6 +35,7 @@ const App = () => {
         <Route path="/project" element={<Project />} />
         <Route path="/contact" element={<Contact />} />
         <Route path="/certification" element={<Certification />} />
+        <Route path="admin" element={<Login/>}/>
         <Route element={<ProtectRoute/>}>
           <Route path="/portfolio-admin" element={<DashboardTemplet />}>
             <Route index element={<Dashboard />} />

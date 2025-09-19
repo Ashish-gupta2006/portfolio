@@ -6,6 +6,7 @@ const cloudinary = require("../config/cloudinaryCon.js");
 const Skill = require("../models/skills.js");
 const Tool = require("../models/tolls.js");
 const Project = require('../models/project.js');
+const Resume = require('../models/resume.js');
 const Certificate = require('../models/certification.js');
 const skillSchema = require("../validations/skillData.js");
 const ToolSchema = require("../validations/toolData.js");
@@ -262,13 +263,19 @@ const resume = async(req, res)=>{
     if(!req.file && !req.filename){
        return res.status(400).json({
         success:false,
-        message:'failed to uplode image.'
+        message:'failed to uplode resume.'
       })
     }
 
+    const newResume = new Resume({
+      resume:req.file.path,
+      fileName:req.file.filename
+    });
+
+    await newResume.save();
     res.status(200).json({
       success:true,
-      message:'successfully uplode image.'
+      message:'successfully uplode resume.'
     })
   } catch (error) {
     console.log(error);

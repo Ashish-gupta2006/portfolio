@@ -1,44 +1,24 @@
-import React from 'react'
+import {useState, useEffect} from 'react'
+import axios from 'axios'
+const BACKEND_URL = import.meta.env.VITE_BACKEND_URL
 
 const Certification = () => {
-    const certification = [
-      {
-        _id: 101,
-        image:
-          "https://res.cloudinary.com/dl1aww2ub/image/upload/v1757879305/portfolio/project/qvf2dltdicdjcy2ol963.jpg",
-        titel: "full stack couse",
-        institute: "apna college",
-        start: "june 2025",
-        end: "july 2026",
-      },
-      {
-        _id: 102,
-        image:
-          "https://res.cloudinary.com/dl1aww2ub/image/upload/v1757879305/portfolio/project/qvf2dltdicdjcy2ol963.jpg",
-        titel: "full stack couse",
-        institute: "apna college",
-        start: "june 2025",
-        end: "july 2026",
-      },
-      {
-        _id: 103,
-        image:
-          "https://res.cloudinary.com/dl1aww2ub/image/upload/v1757879305/portfolio/project/qvf2dltdicdjcy2ol963.jpg",
-        titel: "full stack couse",
-        institute: "apna college",
-        start: "june 2025",
-        end: "july 2026",
-      },
-      {
-        _id: 104,
-        image:
-          "https://res.cloudinary.com/dl1aww2ub/image/upload/v1757879305/portfolio/project/qvf2dltdicdjcy2ol963.jpg",
-        titel: "full stack couse",
-        institute: "apna college",
-        start: "june 2025",
-        end: "july 2026",
-      },
-    ];
+  const[certificate, setCertificate]= useState([]);
+  const getCertificate = async()=>{
+    try {
+      const res = await axios.get(`${BACKEND_URL}/portfolio/certificate`);
+      setCertificate(res.data.data);
+    } catch (error) {
+      console.log(error);
+      alert("failed to fetch data");
+      
+    }
+  }
+
+  useEffect(()=>{
+    getCertificate();
+  },[]);
+
   return (
     <div className="mt-10 px-6 max-w-5xl mx-auto mb-10">
       <div className="text-center">
@@ -46,11 +26,11 @@ const Certification = () => {
         <div className="h-1 w-28 bg-blue-600 rounded-xl mx-auto mt-2"></div>
       </div>
       <div className=" grid grid-cols-1 grid-rows-1 md:grid-cols-2 lg:grid-cols-3 gap-6 rounded-xl shadow-xl mt-6 p-3 ">
-        {certification.map((data) => (
+        {certificate.map((data) => (
           <div key={data._id} className=" border rounded-xl border-blue-600 ">
             <div className="p-2 ">
               <img
-                src={data.image}
+                src={data.image.url}
                 alt={`certi_${data._id}`}
                 className="h-64 w-full object-cover rounded-ss-xl rounded-se-lg"
               />
@@ -59,8 +39,12 @@ const Certification = () => {
               <h2 className="font-semibold  text-2xl mt-0 italic text-gray-700">
                 {data.titel}
               </h2>
-              <p className="font-medium mt-0 italic text-gray-600">{data.institute}</p>
-              <p className='text-sm text-gray-600 italic'>{data.start}&nbsp;-&nbsp;{data.end}</p>
+              <p className="font-medium mt-0 italic text-gray-600">
+                {data.institute}
+              </p>
+              <p className="text-sm text-gray-600 italic">
+                {data.start}&nbsp;-&nbsp;{data.end}
+              </p>
             </div>
           </div>
         ))}

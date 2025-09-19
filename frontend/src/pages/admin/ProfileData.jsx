@@ -127,7 +127,6 @@ const ProfileData = () => {
           </div>
         </form>
       </div>
-      <Home/>
     </div>
   );
 };

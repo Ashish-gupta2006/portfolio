@@ -1,7 +1,6 @@
 const Admin = require('../models/admin.js')
 const bcrypt = require('bcryptjs')
 const jwt = require('jsonwebtoken');
-const Token = require('../models/token.js');
 
 const handleLogin = async (req, res) => {
   try {
@@ -25,8 +24,6 @@ const handleLogin = async (req, res) => {
     const token = jwt.sign({ id: admin._id }, process.env.JWT_SECRET, {
       expiresIn: "1d",
     });
-
-    await Token.create({ userId: admin._id, token });
 
  res.cookie("twt", token, {
    httpOnly: true, 

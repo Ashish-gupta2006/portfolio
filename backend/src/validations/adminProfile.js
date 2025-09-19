@@ -15,11 +15,9 @@ const adminProfileSchema = Joi.object({
 
   profession: Joi.string().min(100).required().messages({
     "string.empty": "Profession is required",
-    'string.min':'profession must be at least 100 character.',
+    "string.min": "profession must be at least 100 character.",
     "any.required": "Profession is required",
   }),
-
-
 });
 
 module.exports = adminProfileSchema;

@@ -1,49 +1,31 @@
-import React from "react";
-
+import {useState, useEffect} from "react";
+import axios from 'axios'
+const BACKEND_URL = import.meta.env.VITE_BACKEND_URL;
 const Skills = () => {
-  // Skills for progress bar
-  const skills = [
-    { name: "HTML", level: 95 },
-    { name: "CSS", level: 90 },
-    { name: "JavaScript", level: 85 },
-    { name: "React.js", level: 80 },
-    { name: "Node.js", level: 75 },
-    { name: "Express.js", level: 70 },
-    { name: "MongoDB", level: 70 },
-    { name: "Tailwind CSS", level: 85 },
-  ];
+  const[skill, setSkill]= useState([]);
+  const[tool, setTool] = useState([]);
+  const getSkill = async()=>{
+      const res = await axios.get(`${BACKEND_URL}/portfolio/skill`);
+      setSkill(res.data.data);
+      console.log(res.data.data);
+  }
 
-  // Tools & Technologies Array
-  const tools = [
-    {
-      name: "React.js",
-      image:
-        "https://upload.wikimedia.org/wikipedia/commons/a/a7/React-icon.svg",
-    },
-    {
-      name: "Node.js",
-      image:
-        "https://upload.wikimedia.org/wikipedia/commons/d/d9/Node.js_logo.svg",
-    },
-    {
-      name: "MongoDB",
-      image: "https://upload.wikimedia.org/wikipedia/en/4/45/MongoDB-Logo.svg",
-    },
-    {
-      name: "Express.js",
-      image:
-        "https://upload.wikimedia.org/wikipedia/commons/6/64/Expressjs.png",
-    },
-    {
-      name: "Tailwind CSS",
-      image:
-        "https://upload.wikimedia.org/wikipedia/commons/d/d5/Tailwind_CSS_Logo.svg",
-    },
-    {
-      name: "Git & GitHub",
-      image: "https://upload.wikimedia.org/wikipedia/commons/3/3f/Git_icon.svg",
-    },
-  ];
+  const getTool = async()=>{
+    try {
+      const res = await axios.get(`${BACKEND_URL}/portfolio/tool`);
+        setTool(res.data.data);
+    } catch (error) {
+      console.log(error);
+      alert('something went wrong.');
+    }
+  }
+
+  useEffect(()=>{
+    getSkill();
+    getTool();
+  },[]);
+  
+
 
   return (
     <>
@@ -61,14 +43,16 @@ const Skills = () => {
 
         {/* Skills Grid */}
         <div className="mt-8 grid grid-cols-1 md:grid-cols-2 gap-8">
-          {skills.map((skill, index) => (
+          {skill.map((skill) => (
             <div
-              key={index}
+              key={skill._id}
               className="bg-white border border-gray-200 shadow-md rounded-lg p-4"
             >
               {/* Skill Info */}
               <div className="flex justify-between mb-2">
-                <span className="font-medium text-gray-800">{skill.name}</span>
+                <span className="font-medium text-gray-800">
+                  {skill.skillName}
+                </span>
                 <span className="font-medium text-gray-600">
                   {skill.level}%
                 </span>
@@ -98,20 +82,20 @@ const Skills = () => {
 
         {/* Tools Grid */}
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-8 mt-8">
-          {tools.map((tool, index) => (
+          {tool.map((tool) => (
             <div
-              key={index}
+              key={tool._id}
               className="bg-white border border-gray-200 shadow-md rounded-lg p-5 hover:shadow-lg transition-all duration-300"
             >
               <div className="flex justify-center items-center mb-4">
                 <img
-                  src={tool.image}
-                  alt={`${tool.name} logo`}
+                  src={tool.image.url}
+                  alt={`${tool._id}image`}
                   className="w-24 h-24 object-contain"
                 />
               </div>
               <p className="text-center font-semibold text-lg text-gray-700">
-                {tool.name}
+                {tool.title}
               </p>
             </div>
           ))}

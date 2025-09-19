@@ -10,6 +10,7 @@ const authenticateRoute = require("./routes/authenticate.js");
 const registerationRoute = require("./routes/registration.js");
 const verifyToken = require("./middlewares/verifyToken.js");
 const userMessageRoute = require('./routes/userMessage.js')
+const profileRouter = require('./routes/portfolio.js')
 // ✅ Correct CORS setup
 app.use(
   cors({
@@ -35,13 +36,14 @@ app.get("/verify-token", verifyToken, (req, res) => {
   });
 });
 
+
 // Routes
 app.use("/admin",adminRoute);
 app.use("/register", registerationRoute);
 app.use("/login", authenticateRoute);
 app.use("/logout", authenticateRoute);
 app.use("/user", userMessageRoute);
-
+app.use("/portfolio", profileRouter);
 
 app.listen(process.env.PORT, () => {
   console.log(`Server is listening on http://localhost:${process.env.PORT}`);

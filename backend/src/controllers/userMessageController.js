@@ -1,5 +1,6 @@
 const Message = require('../models/message.js');
 const messageSchema = require('../validations/messageData.js')
+const Education = require('../models/education.js');
 const userMessageController = async(req, res)=>{
     try {
         const{error, value } = messageSchema.validate(req.body,{abortEarly:false});
@@ -30,4 +31,4 @@ const userMessageController = async(req, res)=>{
 }
 
 
-module.exports = userMessageController;
+module.exports = {userMessageController};

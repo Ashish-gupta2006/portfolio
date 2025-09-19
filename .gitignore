@@ -1,6 +1,18 @@
-./backend/node_modules
-./frontend/node_modules
+# Ignore node_modules folders
+backend/node_modules/
+frontend/node_modules/
 
-./backend/.env
-./frontend/.env
+# Ignore environment files
+backend/.env
+frontend/.env
 
+# Ignore build files
+frontend/dist/
+backend/dist/
+
+# Ignore log files
+*.log
+
+# OS specific files
+.DS_Store
+Thumbs.db

@@ -18,7 +18,7 @@ const AddResume = () => {
       formData.append("resume", data.resume[0]);
       const response = await axios.post(
         `${BACKEND_URL}/admin/resume`,
-        formData
+        formData,{withCredentials:true}
       );
       alert(response.data.message);
       reset();

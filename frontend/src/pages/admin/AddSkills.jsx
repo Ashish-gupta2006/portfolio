@@ -14,7 +14,7 @@ const AddSkills = () => {
   const onSubmit = async(data) => {
     clearErrors();
     try {
-      const response = await axios.post(`${BACKEND_URL}/admin/skills`,data);
+      const response = await axios.post(`${BACKEND_URL}/admin/skills`,data,{withCredentials:true});
       console.log(response);
       alert(response.data.message);
       reset();

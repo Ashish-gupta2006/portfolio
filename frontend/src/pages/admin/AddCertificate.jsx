@@ -22,7 +22,7 @@ const AddCertificate = () => {
       console.log(formData);
        const response = await axios.post(
          `${BACKEND_URL}/admin/certificate`,
-         formData
+         formData,{withCredentials:true}
        );
        console.log(response);
        alert(response.data.message);

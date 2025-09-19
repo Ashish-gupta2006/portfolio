@@ -20,7 +20,7 @@ const AddProject = () => {
       formData.append("description", data.description);
       const response = await axios.post(
         `${BACKEND_URL}/admin/project`,
-        formData
+        formData, {withCredentials:true}
       );
       alert(response.data.message);
       reset();

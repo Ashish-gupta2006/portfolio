@@ -17,7 +17,7 @@ const AddTools = () => {
       const formData = new FormData();
       formData.append('tool_image',data.tool_image[0]);
       formData.append("title",data.title);
-      const response = await axios.post(`${BACKEND_URL}/admin/tools`, formData);
+      const response = await axios.post(`${BACKEND_URL}/admin/tools`, formData,{withCredentials:true});
       console.log(response);
       alert('save successfully');
       reset();

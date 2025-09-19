@@ -23,7 +23,7 @@ const ProfileData = () => {
       // ✅ Axios request (no need to set Content-Type manually)
       const response = await axios.post(
         `${BACKEND_URL}/admin/profile`,
-        formData
+        formData, {withCredentials:true}
       );
 
       alert(response.data.message);

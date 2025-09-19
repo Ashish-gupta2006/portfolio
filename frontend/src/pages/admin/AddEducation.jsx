@@ -12,7 +12,7 @@ const AddEducation = () => {
   } = useForm();
   const onSubmit = async(data) => {
   try {
-    const response = await axios.post(`${BACKEND_URL}/admin/education`, data);
+    const response = await axios.post(`${BACKEND_URL}/admin/education`, data,{withCredentials:true});
     alert(response.data.message);
     reset();
   } catch (error) {

@@ -29,7 +29,7 @@ const handleLogin = async (req, res) => {
    httpOnly: true, 
    signed: true, 
    secure: true, 
-   sameSite: "lax", 
+   sameSite: "None", 
    maxAge: 24 * 60 * 60 * 1000,
  });
 

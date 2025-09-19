@@ -39,7 +39,7 @@ app.get("/verify-token", verifyToken, (req, res) => {
 
 // Routes
 app.use("/admin",adminRoute);
-app.use("/register", registerationRoute);
+// app.use("/register", registerationRoute);
 app.use("/login", authenticateRoute);
 app.use("/logout", authenticateRoute);
 app.use("/user", userMessageRoute);

@@ -1,31 +1,42 @@
-import {useState, useEffect} from "react";
-import axios from 'axios'
+import { useState, useEffect } from "react";
+import axios from "axios";
+import { GridLoader } from "react-spinners";
+import{toast} from 'react-toastify'
 const BACKEND_URL = import.meta.env.VITE_BACKEND_URL;
 const Skills = () => {
-  const[skill, setSkill]= useState([]);
-  const[tool, setTool] = useState([]);
-  const getSkill = async()=>{
+  const [skill, setSkill] = useState([]);
+  const [tool, setTool] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  const getSkill = async () => {
+    try {
       const res = await axios.get(`${BACKEND_URL}/portfolio/skill`);
       setSkill(res.data.data);
-      console.log(res.data.data);
-  }
+    } catch (error) {
+      console.log("error fetching skills",error);
+      toast.error(res.data?.messsage || "something went wrong.")
+    }finally{
+      setLoading(false);
+    }
+  };
 
-  const getTool = async()=>{
+  const getTool = async () => {
     try {
+      setLoading(!loading);
       const res = await axios.get(`${BACKEND_URL}/portfolio/tool`);
-        setTool(res.data.data);
+      setTool(res.data.data);
     } catch (error) {
       console.log(error);
-      alert('something went wrong.');
+      toast.error(res.data?.message ||"Something went wrong")
+    }finally{
+      setLoading(!loading);
     }
-  }
+  };
 
-  useEffect(()=>{
+  useEffect(() => {
     getSkill();
     getTool();
-  },[]);
-  
-
+  }, []);
 
   return (
     <>
@@ -40,6 +51,12 @@ const Skills = () => {
             improving.
           </p>
         </div>
+        
+        {loading && (
+          <div className="flex justify-center items-center h-screen w-full absolute bg-white/70 z-10">
+            <GridLoader color="#2563EB" size={40} />
+          </div>
+        )}
 
         {/* Skills Grid */}
         <div className="mt-8 grid grid-cols-1 md:grid-cols-2 gap-8">

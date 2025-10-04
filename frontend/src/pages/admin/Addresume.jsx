@@ -1,6 +1,7 @@
 import React from "react";
 import { useForm } from "react-hook-form";
 import axios from "axios";
+import{toast} from 'react-toastify'
 const BACKEND_URL = import.meta.env.VITE_BACKEND_URL;
 const AddResume = () => {
   const {
@@ -20,11 +21,11 @@ const AddResume = () => {
         `${BACKEND_URL}/admin/resume`,
         formData,{withCredentials:true}
       );
-      alert(response.data.message);
+      toast.success(response?.data?.message);
       reset();
     } catch (error) {
       console.log(error);
-     alert('failed uplode image.')
+     toast.error('failed uplode image.');
     }
   };
   return (

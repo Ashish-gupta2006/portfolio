@@ -2,7 +2,7 @@ import React from "react";
 import { useForm } from "react-hook-form";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
-
+import{toast} from 'react-toastify'
 const BACKEND_URL = import.meta.env.VITE_BACKEND_URL;
 
 const Login = () => {
@@ -20,8 +20,7 @@ const Login = () => {
       const response = await axios.post(`${BACKEND_URL}/login`, data, {
         withCredentials: true,
       });
-
-      alert(response.data.message || "Login successful!");
+      toast.success(response.data.message || "Login successful!");
 
       if (response.data.success) {
         navigate("/portfolio-admin");
@@ -30,7 +29,7 @@ const Login = () => {
       reset();
     } catch (error) {
       console.error(error);
-      alert(error.response?.data?.message || "Something went wrong.");
+      toast.error(error.response?.data?.message || "Something went wrong.");
     }
   };
 

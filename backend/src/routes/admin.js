@@ -1,8 +1,12 @@
 const express = require("express");
-const router = express.Router();
+const router = express.Router({ mergeParams: true });
+const cloudinary = require("../config/cloudinaryCon.js");
 const {
   adminCreateProfile,
+  updateProfile,
   addEducations,
+  deleteEducation,
+  updateEducation,
   addSkill,
   addTools,
   addProject,
@@ -19,6 +23,7 @@ const {
 } = require("../middlewares/uplodeCoudinary.js");
 
 const verifyAdmin = require("../middlewares/verifyToken.js");
+
 router.post(
   "/profile",
   verifyAdmin,
@@ -26,7 +31,16 @@ router.post(
   adminCreateProfile
 );
 
+router.put(
+  "/profile/:id",
+  verifyAdmin,
+  uplodeProfile.single("image"),
+  updateProfile
+);
+
 router.post("/education", verifyAdmin, addEducations);
+router.delete("/education/:id", verifyAdmin, deleteEducation);
+router.put("/education/:id", verifyAdmin, updateEducation);
 
 router.post("/skills", verifyAdmin, addSkill);
 
@@ -44,9 +58,10 @@ router.post(
   uplodeCertificate.single("image"),
   addCertificate
 );
-router.post("/resume", 
-    verifyAdmin,
-     uplodeResume.single("resume"),
-      resume);
+router.post("/resume", verifyAdmin, uplodeResume.single("resume"), resume);
 
 module.exports = router;
+
+// const destroyExistingImage = async()=> {
+//   await cloudinary.uploader.destroy("portfolio/profile");
+// }

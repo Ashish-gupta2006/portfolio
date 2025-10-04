@@ -1,9 +1,10 @@
 import {useState, useEffect} from 'react'
 import axios from 'axios'
 const BACKEND_URL = import.meta.env.VITE_BACKEND_URL
-
+import {GridLoader} from 'react-spinners'
 const Certification = () => {
   const[certificate, setCertificate]= useState([]);
+  const[loading, setLoading]= useState(true);
   const getCertificate = async()=>{
     try {
       const res = await axios.get(`${BACKEND_URL}/portfolio/certificate`);
@@ -12,6 +13,8 @@ const Certification = () => {
       console.log(error);
       alert("failed to fetch data");
       
+    }finally{
+      setLoading(false);
     }
   }
 
@@ -21,6 +24,11 @@ const Certification = () => {
 
   return (
     <div className="mt-10 px-6 max-w-5xl mx-auto mb-10">
+      {loading && (
+        <div className="flex justify-center items-center h-96">
+          <GridLoader color="#2563EB" size={20} />
+        </div>
+      ) }
       <div className="text-center">
         <h1 className="text-3xl font-bold text-gray-800">Certifications</h1>
         <div className="h-1 w-28 bg-blue-600 rounded-xl mx-auto mt-2"></div>

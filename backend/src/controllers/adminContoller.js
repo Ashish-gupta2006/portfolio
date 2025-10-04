@@ -5,13 +5,13 @@ const educationSchema = require("../validations/educationData.js");
 const cloudinary = require("../config/cloudinaryCon.js");
 const Skill = require("../models/skills.js");
 const Tool = require("../models/tolls.js");
-const Project = require('../models/project.js');
-const Resume = require('../models/resume.js');
-const Certificate = require('../models/certification.js');
+const Project = require("../models/project.js");
+const Resume = require("../models/resume.js");
+const Certificate = require("../models/certification.js");
 const skillSchema = require("../validations/skillData.js");
 const ToolSchema = require("../validations/toolData.js");
-const projectSchema = require('../validations/projectData.js');
-const certificateSchema = require('../validations/certificateData.js')
+const projectSchema = require("../validations/projectData.js");
+const certificateSchema = require("../validations/certificateData.js");
 const adminCreateProfile = async (req, res) => {
   try {
     // joi validate form data.
@@ -63,6 +63,66 @@ const adminCreateProfile = async (req, res) => {
   }
 };
 
+const updateProfile = async(req, res)=>{
+  try {
+    const { id } = req.params;
+    const admin = await Admin.findById(id); 
+    if (!admin) {
+      return res.status(404).json({
+        success: false,
+        message: "admin profile not found.",
+      });
+    }
+    const { error, value } = adminProfileSchema.validate(req.body, {
+      abortEarly: false,
+    });
+    if (error) {
+      if (req.file && req.file.filename) {
+        await cloudinary.uploader.destroy(req.file.filename);
+      } 
+      return res.status(400).json({
+        success: false,
+        message: "validation failed",
+        errors: error.details.map((err) => err.message),
+      });
+    }
+    if(!req.file){
+      return res.status(400).json({
+        success: false,
+        message: "Profile image is required",
+      });
+    }
+
+    await Admin.findByIdAndUpdate(
+      id,
+      {
+        ...value,
+        image: {
+          url: req.file.path,
+          fileName: req.file.filename,
+        },
+      },
+      { new: true }
+    );
+
+    res.status(200).json({
+      success: true,
+      message: "profile updated successfully.",
+    });
+  } catch (error) {
+    console.log(error);
+
+    if (req.file && req.filename) {
+      await cloudinary.uploader.destroy(req.file.filename);
+    }
+    
+      res.status(500).json({
+      success: false, 
+      message: "Internal server error",
+      error: error.message,
+    });
+  
+}}
 const addEducations = async (req, res) => {
   try {
     const { error, value } = educationSchema.validate(req.body, {
@@ -86,6 +146,66 @@ const addEducations = async (req, res) => {
     res.status(500).json({
       success: false,
       message: "Internal error ",
+    });
+  }
+};
+
+const deleteEducation = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const edu = await Education.findById(id);
+    if (!edu) {
+      return res.status(404).json({
+        success: false,
+        message: "education data not found.",
+      });
+    }
+    await Education.findByIdAndDelete(id);
+    res.status(200).json({
+      success: true,
+      message: "successfully delete education data.",
+    });
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({
+      success: false,
+      message: "Internal error.",
+    });
+  }
+};
+
+const updateEducation = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const edu = await Education.findById(id);
+    if (!edu) {
+      return res.status(404).json({
+        success: false,
+        message: "education data not found.",
+      });
+    }
+    const { error, value } = educationSchema.validate(req.body, {
+      abortEarly: false,
+    });
+    if (error) {
+      return res.status(400).json({
+        success: false,
+        message: "data validation failed.",
+        errors: error.details.map((err) => err.message),
+      });
+    }
+    await Education.findByIdAndUpdate(id, value);
+
+    res.status(200).json({
+      success: true,
+      message: "successfully update education data.",
+    });
+  } catch (error) {
+    console.log(error);
+
+    res.status(500).json({
+      success: false,
+      message: "Internal error.",
     });
   }
 };
@@ -129,32 +249,32 @@ const addTools = async (req, res) => {
         await cloudinary.uploader.destroy(req.file.filename);
       }
       return res.status(400).json({
-        success:false,
-        message:'data validation failed.',
-        errors : error.details.map(err=>(err.message))
+        success: false,
+        message: "data validation failed.",
+        errors: error.details.map((err) => err.message),
       });
     }
-    if(!req.file && req.file.filename){
+    if (!req.file && req.file.filename) {
       return res.status(400).json({
-        success:false,
-        message:'failed uplode image.'
+        success: false,
+        message: "failed uplode image.",
       });
     }
-   const newTool = new Tool({
-    ...value,
-    image:{
-      url:req.file.path,
-      fileName:req.file.filename
-    }
-   });
-   await newTool.save();
+    const newTool = new Tool({
+      ...value,
+      image: {
+        url: req.file.path,
+        fileName: req.file.filename,
+      },
+    });
+    await newTool.save();
     res.status(200).json({
       success: true,
       message: "data save successfully.",
     });
   } catch (error) {
     console.log(error);
-    if(req.file && req.file.filename){
+    if (req.file && req.file.filename) {
       await cloudinary.uploader.destroy(req.file.filename);
     }
     res.status(500).json({
@@ -164,75 +284,79 @@ const addTools = async (req, res) => {
   }
 };
 
-const addProject = async(req, res)=>{
-    try {
-      const{error, value} = projectSchema.validate(req.body,{abortEarly:false});
+const addProject = async (req, res) => {
+  try {
+    const { error, value } = projectSchema.validate(req.body, {
+      abortEarly: false,
+    });
 
-      // failed validation
-      if(error){
-        if(req.file && req.file.filename){
-          await cloudinary.uploader.destroy(req.file.filename);
-        }
-        return res.status(400).json({
-          success:false,
-          message:'validation failed',
-          errors:error.details.map((err)=>(err.message)),
-        });
-      }
-
-      // failed uplode file
-      if(!req.file && !req.file.filename){
-        return res.status(400).json({
-          success:false,
-          message:'failed image uplode.'
-        });
-      }
-
-      const newProject = new Project({
-        ...value,
-        projectImage:{
-          url:req.file.path,
-          fileName:req.file.filename,
-        }
-      });
-
-      await newProject.save();
-
-      res.status(200).json({
-        success:true,
-        message:'data save successfully.',
-      })
-    } catch (error) {
-      console.log(`error is : ${error}`);
-      if(req.file && req.file.filename){
+    // failed validation
+    if (error) {
+      if (req.file && req.file.filename) {
         await cloudinary.uploader.destroy(req.file.filename);
       }
-      res.status(500).json({
-        success:false,
-        message:'Internal server Error.',
+      return res.status(400).json({
+        success: false,
+        message: "validation failed",
+        errors: error.details.map((err) => err.message),
       });
     }
-}
 
-const addCertificate = async(req, res)=>{
+    // failed uplode file
+    if (!req.file && !req.file.filename) {
+      return res.status(400).json({
+        success: false,
+        message: "failed image uplode.",
+      });
+    }
+
+    const newProject = new Project({
+      ...value,
+      projectImage: {
+        url: req.file.path,
+        fileName: req.file.filename,
+      },
+    });
+
+    await newProject.save();
+
+    res.status(200).json({
+      success: true,
+      message: "data save successfully.",
+    });
+  } catch (error) {
+    console.log(`error is : ${error}`);
+    if (req.file && req.file.filename) {
+      await cloudinary.uploader.destroy(req.file.filename);
+    }
+    res.status(500).json({
+      success: false,
+      message: "Internal server Error.",
+    });
+  }
+};
+
+const addCertificate = async (req, res) => {
   try {
-    const { error, value } = certificateSchema.validate(req.body,{abortEarly:false});
-    if(error){
-      if(req.file && req.filename){
+    const { error, value } = certificateSchema.validate(req.body, {
+      abortEarly: false,
+    });
+    if (error) {
+      if (req.file && req.filename) {
         await cloudinary.uploader.destroy(req.filename);
       }
 
       return res.status(400).json({
-        success:false,
-        message:'form  data valiadtion failed.',
-        errors: error.details.map(err=>(err.message)),
+        success: false,
+        message: "form  data valiadtion failed.",
+        errors: error.details.map((err) => err.message),
       });
     }
 
-    if(!req.file && !req.filename){
-       return res.status(400).json({
-        success:false,
-        message:'failed image uplode.'
+    if (!req.file && !req.filename) {
+      return res.status(400).json({
+        success: false,
+        message: "failed image uplode.",
       });
     }
     const newCertificate = new Certificate({
@@ -245,49 +369,52 @@ const addCertificate = async(req, res)=>{
     await newCertificate.save();
 
     res.status(200).json({
-      success:true,
-      message:'Data save successfully.'
+      success: true,
+      message: "Data save successfully.",
     });
-
   } catch (error) {
     console.log(error);
     res.status(500).json({
-      success:false,
-      message:' Server failed, sorry..'
+      success: false,
+      message: " Server failed, sorry..",
     });
   }
-}
+};
 
-const resume = async(req, res)=>{
+const resume = async (req, res) => {
   try {
-    if(!req.file && !req.filename){
-       return res.status(400).json({
-        success:false,
-        message:'failed to uplode resume.'
-      })
+    if (!req.file && !req.filename) {
+      return res.status(400).json({
+        success: false,
+        message: "failed to uplode resume.",
+      });
     }
 
     const newResume = new Resume({
-      resume:req.file.path,
-      fileName:req.file.filename
+      resume: req.file.path,
+      fileName: req.file.filename,
     });
 
     await newResume.save();
     res.status(200).json({
-      success:true,
-      message:'successfully uplode resume.'
-    })
+      success: true,
+      message: "successfully uplode resume.",
+    });
   } catch (error) {
     console.log(error);
     res.status(500).json({
-      success:false,
-      message:'server failed, sorry..'
+      success: false,
+      message: "server failed, sorry..",
     });
   }
-}
+};
+
 module.exports = {
   adminCreateProfile,
+  updateProfile,
   addEducations,
+  deleteEducation,
+  updateEducation,
   addSkill,
   addTools,
   addProject,

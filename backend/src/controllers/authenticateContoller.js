@@ -25,15 +25,21 @@ const handleLogin = async (req, res) => {
       expiresIn: "1d",
     });
 
+//  res.cookie("twt", token, {
+//    httpOnly: true, 
+//    signed: true, 
+//    secure: false, 
+//    sameSite: "lax", 
+//    maxAge: 24 * 60 * 60 * 1000,
+//  });
+
  res.cookie("twt", token, {
-   httpOnly: true, 
-   signed: true, 
-   secure: false, 
-   sameSite: "lax", 
+   httpOnly: true,
+   signed: true,
+   secure: true,
+   sameSite: "None",
    maxAge: 24 * 60 * 60 * 1000,
  });
-
-
     res.status(200).json({
       success: true,
       message: "Login successful",

@@ -1,12 +1,12 @@
 import React, { useState, useEffect } from "react";
 import { Navigate, Outlet } from "react-router-dom";
 import axios from "axios";
-
+import { GridLoader } from "react-spinners";
 const BACKEND_URL = import.meta.env.VITE_BACKEND_URL;
 
 const ProtectRoute = () => {
   const [authentication, setAuthentication] = useState(false);
-  const [loading, setLoading] = useState(true); 
+  const [loading, setLoading] = useState(true);
   const verify = async () => {
     try {
       const response = await axios.get(`${BACKEND_URL}/verify-token`, {
@@ -31,9 +31,14 @@ const ProtectRoute = () => {
   }, []);
 
   // Show loading screen while verifying
-  if (loading) {
-    return <div>Loading.....</div>;
-  }
+ if (loading) {
+   return (
+     <div className="flex justify-center items-center h-screen w-full absolute bg-white/70 z-10">
+       <GridLoader color="#2563EB" size={40} />
+     </div>
+   );
+ }
+
   return authentication ? <Outlet /> : <Navigate to="/admin" />;
 };
 

@@ -1,22 +1,30 @@
-import { useState,useEffect } from "react";
-import axios from 'axios'
+import { useState, useEffect } from "react";
+import axios from "axios";
+import { monthYearFormate } from "../helper/formateDate.js";
+import {GridLoader} from 'react-spinners'
 const BACKEND_URL = import.meta.env.VITE_BACKEND_URL;
 const Education = () => {
   const [education, setEducation] = useState([]);
-  const getEducation = async()=>{
+  const [loading, setLoading] = useState(true);
+  const getEducation = async () => {
     try {
       const res = await axios.get(`${BACKEND_URL}/portfolio/education`);
       setEducation(res.data.data);
-
     } catch (error) {
       console.log(error);
+    }finally {
+      setLoading(false);
+
     }
-  }
+  };
 
-  useEffect(()=>{
+  useEffect(() => {
     getEducation();
+  }, []);
 
-  },[]);
+
+
+
   return (
     <div className="mt-10 px-6 max-w-5xl mx-auto mb-10">
       {/* Heading */}
@@ -24,6 +32,10 @@ const Education = () => {
         <h1 className="text-3xl font-bold text-gray-800">Education</h1>
         <div className="w-20 h-1 bg-blue-500 mx-auto mt-2 rounded-lg"></div>
       </div>
+
+      {loading && <div className="flex justify-center items-center h-96">
+        <GridLoader color="#3b82f6" />
+      </div>  }
 
       {/* Cards Layout */}
       <div className="mt-10 grid grid-cols-1 md:grid-cols-3 gap-6">
@@ -37,8 +49,10 @@ const Education = () => {
             </h2>
             <p className="text-gray-600 font-medium">{edu.college}</p>
             <p className="text-sm text-gray-500 italic">
-              {edu.start}&nbsp;-&nbsp;{edu.end}
+              {monthYearFormate(edu.start)}&nbsp;-&nbsp;
+              {monthYearFormate(edu.end)}
             </p>
+
             <p className="mt-3 text-gray-700 leading-relaxed">
               {edu.description}
             </p>

@@ -1,7 +1,8 @@
-import React ,{useEffect} from "react";
+import React ,{useState, useEffect} from "react";
 import axios from 'axios'
-
+import {GridLoader} from 'react-spinners'
 const About = () => {
+  const [loading, setLoading] = useState(true);
   return (
     <div className="mt-10 px-6 max-w-5xl mx-auto mb-10">
       {/* Section Title */}

@@ -3,6 +3,7 @@ import { useForm } from "react-hook-form";
 import * as Yup from "yup";
 import { yupResolver } from "@hookform/resolvers/yup";
 import axios from "axios";
+import{toast} from 'react-toastify'
 const BACKEND_URL = import.meta.env.VITE_BACKEND_URL;
 const Contact = () => {
   const validateSchema = Yup.object({
@@ -38,15 +39,18 @@ const Contact = () => {
   const onSubmit = async (data) => {
     try {
       const response = await axios.post(`${BACKEND_URL}/user/message`, data);
-      alert(response.data.message);
+      // alert(response.data.message);
+      toast.success(response.data.message)
       reset();
       clearErrors();
     } catch (error) {
       console.log("error sending message: ", error);
       if (error.response?.data?.errors) {
-        alert(error.response.data.errors.join(", "));
+        // alert(error.response.data.errors.join(", "));
+        toast.error(error.response.data.errors.join(", "))
       } else {
-        alert(error.response?.data?.message || "something went worng");
+        // alert(error.response?.data?.message || "something went worng");
+        toast.error(error.response?.data?.message || "something went worng");
       }
     }
   };

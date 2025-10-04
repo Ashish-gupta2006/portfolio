@@ -1,6 +1,7 @@
 import React from 'react'
 import{useForm} from 'react-hook-form'
 import axios from 'axios'
+import {toast} from 'react-toastify'
 const BACKEND_URL= import.meta.env.VITE_BACKEND_URL
 const AddTools = () => {
   const{
@@ -18,15 +19,14 @@ const AddTools = () => {
       formData.append('tool_image',data.tool_image[0]);
       formData.append("title",data.title);
       const response = await axios.post(`${BACKEND_URL}/admin/tools`, formData,{withCredentials:true});
-      console.log(response);
-      alert('save successfully');
+      toast.success(response?.data?.message||'Tool added successfully');
       reset();
     } catch (error) {
       console.log(error);
       if(error.response?.data?.errors){
-        alert(error.response?.data?.errors);
+        toast.error(error.response?.data?.errors);
       }else{
-        alert(error.response?.data?.message);
+        toast.error(error.response?.data?.message);
       }
     }
   }

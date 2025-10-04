@@ -1,6 +1,7 @@
 import React from "react";
 import { useForm } from "react-hook-form";
 import axios from "axios";
+import{toast} from 'react-toastify'
 const BACKEND_URL = import.meta.env.VITE_BACKEND_URL;
 const AddProject = () => {
   const {
@@ -22,14 +23,14 @@ const AddProject = () => {
         `${BACKEND_URL}/admin/project`,
         formData, {withCredentials:true}
       );
-      alert(response.data.message);
+      toast.success(response?.data?.message);
       reset();
     } catch (error) {
       console.log(error);
       if(error.response?.data?.errors){
-        alert(error.response?.data?.errors);
+        toast.error(error.response?.data?.errors);
       }else{
-        alert(error.response?.data?.message);
+        toast.error(error.response?.data?.message); 
       }
     }
   };

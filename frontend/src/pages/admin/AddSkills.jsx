@@ -1,6 +1,7 @@
 import React from "react";
 import { useForm } from "react-hook-form";
 import axios from 'axios'
+import{toast} from 'react-toastify'
 const BACKEND_URL = import.meta.env.VITE_BACKEND_URL;
 const AddSkills = () => {
   const {
@@ -15,14 +16,13 @@ const AddSkills = () => {
     clearErrors();
     try {
       const response = await axios.post(`${BACKEND_URL}/admin/skills`,data,{withCredentials:true});
-      console.log(response);
-      alert(response.data.message);
+      toast.success(response.data.message); 
       reset();
     } catch (error) {
       if(error.response.data?.errors){
-        alert(error.response?.data?.errors);
+        toast.error(error.response?.data?.errors);
       }else{
-        alert(error.response?.data?.message|| 'some thing went wrong.');
+        toast.error(error.response?.data?.message|| 'some thing went wrong.');
       }
     }
   };

@@ -650,21 +650,21 @@ const updateCertificate = async (req, res) => {
           fileName: req.file.filename,
         },
       });
-    }else{
+    } else {
       await Certificate.findByIdAndUpdate(id, value);
     }
 
     res.status(200).json({
-      success:true,
-      message:"Update successfully!",
-    })
+      success: true,
+      message: "Update successfully!",
+    });
   } catch (error) {
     console.error(error);
     res.status(500).json({
-      success:false,
-      message:"Internal error.",
-      error:error
-    })
+      success: false,
+      message: "Internal error.",
+      error: error,
+    });
   }
 };
 
@@ -678,8 +678,8 @@ const resume = async (req, res) => {
     }
 
     const newResume = new Resume({
-      resume: req.file.path, 
-      fileName: req.file.filename,
+      resume: req.file.path, // Cloudinary URL
+      fileName: req.file.originalname, // save actual file name
     });
 
     await newResume.save();
@@ -697,7 +697,6 @@ const resume = async (req, res) => {
     });
   }
 };
-
 
 module.exports = {
   adminCreateProfile,

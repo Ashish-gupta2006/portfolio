@@ -81,11 +81,11 @@ const Navbar = () => {
             Project
           </Link>
           <Link
-            to="/contect"
+            to="/contact"
             className="hover:text-gray-300"
             onClick={() => setIsOpen(false)}
           >
-            contect
+            contact
           </Link>
         </div>
       )}

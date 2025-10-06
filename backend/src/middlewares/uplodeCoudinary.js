@@ -1,6 +1,6 @@
-const multer = require('multer');
-const cloudinary = require('../config/cloudinaryCon.js');
-const {CloudinaryStorage} = require('multer-storage-cloudinary');
+const multer = require("multer");
+const cloudinary = require("../config/cloudinaryCon.js");
+const { CloudinaryStorage } = require("multer-storage-cloudinary");
 
 const certification = new CloudinaryStorage({
   cloudinary: cloudinary,
@@ -25,38 +25,33 @@ const project = new CloudinaryStorage({
   },
 });
 
-
 const resume = new CloudinaryStorage({
   cloudinary: cloudinary,
   params: {
     folder: "portfolio/resume",
-    resource_type: "raw", 
-    allowed_formats: ["pdf"],
-    format: "pdf",
-    public_id: (req, file) => file.originalname.split(".")[0],
+    allowed_formats: ["png", "jpg", "jpeg", "pdf"],
   },
 });
 
 
-
-const tool =  new CloudinaryStorage({
-  cloudinary :cloudinary,
+const tool = new CloudinaryStorage({
+  cloudinary: cloudinary,
   params: {
     folder: "portfolio/tools",
     allowed_formats: ["png", "jpg", "jpeg"],
   },
 });
 
-const uplodeTools = multer({storage:tool});
- const uplodeResume = multer({ storage:resume}); 
-const uplodeProject = multer({storage:project});
- const uplodeProfile = multer({ storage:profile}); 
- const uplodeCertificate = multer({ storage: certification }); 
+const uplodeTools = multer({ storage: tool });
+const uplodeResume = multer({ storage: resume });
+const uplodeProject = multer({ storage: project });
+const uplodeProfile = multer({ storage: profile });
+const uplodeCertificate = multer({ storage: certification });
 
- module.exports = {
-   uplodeCertificate,
-   uplodeTools,
-   uplodeResume,
-   uplodeProject,
-   uplodeProfile,
- };
+module.exports = {
+  uplodeCertificate,
+  uplodeTools,
+  uplodeResume,
+  uplodeProject,
+  uplodeProfile,
+};

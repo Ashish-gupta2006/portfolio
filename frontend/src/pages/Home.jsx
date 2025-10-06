@@ -59,7 +59,7 @@ const Home = () => {
           to building modern, responsive, and user-friendly web applications.
         </p>
         <button className="bg-blue-500 hover:bg-blue-600 text-white px-6 py-2 rounded-lg shadow-md transition duration-300 mt-2">
-          <a href={resume} download="Ashish_Gupta_Resume.pdf" target="_blank">
+          <a href={resume} download="resume.pdf" target="_blank">
             Resume
           </a>
         </button>

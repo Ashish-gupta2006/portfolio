@@ -27,7 +27,7 @@ const messageSchema = Joi.object({
   message: Joi.string()
     .required()
     .min(20)
-    .pattern(/^[A-Za-z ]+$/)
+    .pattern(/^[A-Za-z.,?!'"\s-]+$/)
     .messages({
       "string.empty": "Message is required.",
       "string.min": "Message must be at least 20 characters.",

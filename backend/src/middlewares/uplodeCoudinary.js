@@ -16,6 +16,7 @@ const profile = new CloudinaryStorage({
     allowed_formats: ["png", "jpg", "jpeg"],
   },
 });
+
 const project = new CloudinaryStorage({
   cloudinary: cloudinary,
   params: {
@@ -24,14 +25,19 @@ const project = new CloudinaryStorage({
   },
 });
 
+
 const resume = new CloudinaryStorage({
   cloudinary: cloudinary,
   params: {
     folder: "portfolio/resume",
-    resource_type: "raw",
-    format: "pdf", 
-  }
+    resource_type: "raw", 
+    allowed_formats: ["pdf"],
+    format: "pdf",
+    public_id: (req, file) => file.originalname.split(".")[0],
+  },
 });
+
+
 
 const tool =  new CloudinaryStorage({
   cloudinary :cloudinary,

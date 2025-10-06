@@ -1,5 +1,6 @@
+import axios from "axios";
 import { NavLink, Outlet } from "react-router-dom";
-
+const BACKEND_URL = import.meta.env.VITE_BACKEND_URL;
 const DashboardTemplet = () => {
   return (
     <div className="max-w-7xl mx-auto">
@@ -92,6 +93,7 @@ const DashboardTemplet = () => {
           >
             Change Password
           </NavLink>
+        
         </div>
 
         {/* Main Content Area */}

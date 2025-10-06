@@ -63,11 +63,14 @@ const adminCreateProfile = async (req, res) => {
   }
 };
 
-const updateProfile = async(req, res)=>{
+const updateProfile = async (req, res) => {
   try {
     const { id } = req.params;
-    const admin = await Admin.findById(id); 
+    const admin = await Admin.findById(id);
     if (!admin) {
+      if (req.file && req.file.filename) {
+        await cloudinary.uploader.destroy(req.file.filename);
+      }
       return res.status(404).json({
         success: false,
         message: "admin profile not found.",
@@ -79,31 +82,30 @@ const updateProfile = async(req, res)=>{
     if (error) {
       if (req.file && req.file.filename) {
         await cloudinary.uploader.destroy(req.file.filename);
-      } 
+      }
       return res.status(400).json({
         success: false,
         message: "validation failed",
         errors: error.details.map((err) => err.message),
       });
     }
-    if(!req.file){
-      return res.status(400).json({
-        success: false,
-        message: "Profile image is required",
-      });
-    }
 
-    await Admin.findByIdAndUpdate(
-      id,
-      {
-        ...value,
-        image: {
-          url: req.file.path,
-          fileName: req.file.filename,
+    if (req.file && req.file.filename) {
+      await cloudinary.uploader.destroy(admin.image.fileName);
+      await Admin.findByIdAndUpdate(
+        id,
+        {
+          ...value,
+          image: {
+            url: req.file.path,
+            fileName: req.file.filename,
+          },
         },
-      },
-      { new: true }
-    );
+        { new: true }
+      );
+    } else {
+      await Admin.findByIdAndUpdate(id, value);
+    }
 
     res.status(200).json({
       success: true,
@@ -111,18 +113,17 @@ const updateProfile = async(req, res)=>{
     });
   } catch (error) {
     console.log(error);
-
     if (req.file && req.filename) {
       await cloudinary.uploader.destroy(req.file.filename);
     }
-    
-      res.status(500).json({
-      success: false, 
+
+    res.status(500).json({
+      success: false,
       message: "Internal server error",
       error: error.message,
     });
-  
-}}
+  }
+};
 const addEducations = async (req, res) => {
   try {
     const { error, value } = educationSchema.validate(req.body, {
@@ -212,7 +213,6 @@ const updateEducation = async (req, res) => {
 
 const addSkill = async (req, res) => {
   try {
-    console.log("skills schema", skillSchema);
     const { error, value } = skillSchema.validate(req.body, {
       abortEarly: false,
     });
@@ -239,6 +239,65 @@ const addSkill = async (req, res) => {
   }
 };
 
+const deleteSkill = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const skill = await Skill.findById(id);
+    if (!skill) {
+      return res.status(404).json({
+        success: false,
+        message: "skill data not found.",
+      });
+    }
+    await Skill.findByIdAndDelete(id);
+    res.status(200).json({
+      success: true,
+      message: "successfully delete skill data.",
+    });
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({
+      success: false,
+      message: "Internal error.",
+    });
+  }
+};
+
+const updateSkill = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const skill = await Skill.findById(id);
+    if (!skill) {
+      return res.status(404).json({
+        success: false,
+        message: "skill data not found.",
+      });
+    }
+    const { error, value } = skillSchema.validate(req.body, {
+      abortEarly: false,
+    });
+    if (error) {
+      return res.status(400).json({
+        success: false,
+        message: " data validation failed",
+        errors: error.details.map((err) => err.message),
+      });
+    }
+    await Skill.findByIdAndUpdate(id, value);
+    res.status(200).json({
+      success: true,
+      message: "successfully update skill data.",
+    });
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({
+      success: false,
+      message: "Internal error.",
+    });
+  }
+};
+
+// start tools controller
 const addTools = async (req, res) => {
   try {
     const { error, value } = ToolSchema.validate(req.body, {
@@ -284,6 +343,75 @@ const addTools = async (req, res) => {
   }
 };
 
+const deleteTool = async (req, res) => {
+  const { id } = req.params;
+  const tool = await Tool.findById(id);
+  if (!tool) {
+    return res.status(400).json({
+      success: false,
+      message: " Tool not found!",
+    });
+  }
+  await cloudinary.uploader.destroy(tool.image.fileName);
+  await Tool.findByIdAndDelete(id);
+  res.status(200).json({
+    success: true,
+    message: " successfully deleted!",
+  });
+};
+
+const updateTool = async (req, res) => {
+  try {
+    const { id } = req.params;
+    console.log(id);
+    const tool = await Tool.findById(id);
+    if (!tool) {
+      if (req.file && req.file.filename) {
+        await cloudinary.uploader.destroy(req.file.filename);
+      }
+      return res.status(400).json({
+        success: false,
+        message: "Toll not found",
+      });
+    }
+    const { error, value } = ToolSchema.validate(req.body, {
+      abortEarly: false,
+    });
+    if (error) {
+      if (req.file && req.file.filename) {
+        await cloudinary.uploader.destroy(req.file.filename);
+      }
+      return res.status(400).json({
+        success: false,
+        message: "Validation failed!",
+        errors: error.details.map((err) => err.message),
+      });
+    }
+    if (req.file && req.file.filename) {
+      await cloudinary.uploader.destroy(tool.image.fileName);
+      await Tool.findByIdAndUpdate(id, {
+        ...value,
+        image: {
+          url: req.file.path,
+          fileName: req.file.filename,
+        },
+      });
+    } else {
+      await Tool.findByIdAndUpdate(id, value);
+    }
+    res.status(200).json({
+      success: true,
+      message: "Edit successfully!",
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({
+      success: false,
+      message: "something want wrong",
+    });
+  }
+};
+// End tools controller
 const addProject = async (req, res) => {
   try {
     const { error, value } = projectSchema.validate(req.body, {
@@ -336,14 +464,94 @@ const addProject = async (req, res) => {
   }
 };
 
+const deleteProject = async (req, res) => {
+  try {
+    const { proId } = req.params;
+    const project = await Project.findById(proId);
+    if (!project) {
+      return res.status(404).json({
+        success: false,
+        message: "project data not found.",
+      });
+    }
+    await cloudinary.uploader.destroy(project.projectImage.fileName);
+    await Project.findByIdAndDelete(proId);
+    res.status(200).json({
+      success: true,
+      message: "successfully delete project data.",
+    });
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({
+      success: false,
+      message: "Internal error.",
+    });
+  }
+};
+
+const editproject = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const project = await Project.findById(id);
+
+    if (!project) {
+      if (req.file && req.file.filename) {
+        await cloudinary.uploader.destroy(req.file.filename);
+      }
+      return res.status(400).json({
+        success: false,
+        message: "project  not found!",
+      });
+    }
+
+    const { error, value } = projectSchema.validate(req.body, {
+      abortEarly: false,
+    });
+
+    if (error) {
+      if (req.file && req.file.filename) {
+        await cloudinary.uploader.destroy(req.file.filename);
+      }
+      return res.status(400).json({
+        success: false,
+        message: "validation failed!",
+        errors: error.details.map((err) => err.message),
+      });
+    }
+    if (req.file && req.file.filename) {
+      await cloudinary.uploader.destroy(project.projectImage.fileName);
+      await Project.findByIdAndUpdate(id, {
+        ...value,
+        projectImage: {
+          url: req.file.path,
+          fileName: req.file.filename,
+        },
+      });
+    } else {
+      await Project.findByIdAndUpdate(id, value);
+    }
+    res.status(200).json({
+      success: true,
+      message: "update successfully!",
+    });
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({
+      success: false,
+      message: "internal error",
+      error: error,
+    });
+  }
+};
+
 const addCertificate = async (req, res) => {
   try {
     const { error, value } = certificateSchema.validate(req.body, {
       abortEarly: false,
     });
     if (error) {
-      if (req.file && req.filename) {
-        await cloudinary.uploader.destroy(req.filename);
+      if (req.file && req.file.filename) {
+        await cloudinary.uploader.destroy(req.file.filename);
       }
 
       return res.status(400).json({
@@ -381,33 +589,115 @@ const addCertificate = async (req, res) => {
   }
 };
 
-const resume = async (req, res) => {
+const deleteCertificate = async (req, res) => {
   try {
-    if (!req.file && !req.filename) {
+    const { id } = req.params;
+    const certificate = await Certificate.findById(id);
+    if (!certificate) {
       return res.status(400).json({
         success: false,
-        message: "failed to uplode resume.",
+        message: "Certificate data not find!",
       });
     }
-
-    const newResume = new Resume({
-      resume: req.file.path,
-      fileName: req.file.filename,
-    });
-
-    await newResume.save();
+    await cloudinary.uploader.destroy(certificate.image.fileName);
+    await Certificate.findByIdAndDelete(id);
     res.status(200).json({
       success: true,
-      message: "successfully uplode resume.",
+      message: "Deleted sucessfully!",
     });
   } catch (error) {
     console.log(error);
     res.status(500).json({
       success: false,
-      message: "server failed, sorry..",
+      message: "Internal error!",
     });
   }
 };
+
+const updateCertificate = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const certificate = await Certificate.findById(id);
+    if (!certificate) {
+      if (req.file && req.file.filename) {
+        await cloudinary.uploader.destroy(req.file.filename);
+      }
+      return res.status(400).json({
+        success: false,
+        message: "Certificate data not find!",
+      });
+    }
+
+    const { error, value } = certificateSchema.validate(req.body, {
+      abortEarly: false,
+    });
+    if (error) {
+      if (req.file && req.file.filename) {
+        await cloudinary.uploader.destroy(req.file.filename);
+      }
+      return res.status(400).json({
+        success: false,
+        message: "Validation failed!",
+        errors: error.details.map((err) => err.message),
+      });
+    }
+    if (req.file && req.file.filename) {
+      await cloudinary.uploader.destroy(certificate.image.fileName);
+      await Certificate.findByIdAndUpdate(id, {
+        ...value,
+        image: {
+          url: req.file.path,
+          fileName: req.file.filename,
+        },
+      });
+    }else{
+      await Certificate.findByIdAndUpdate(id, value);
+    }
+
+    res.status(200).json({
+      success:true,
+      message:"Update successfully!",
+    })
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({
+      success:false,
+      message:"Internal error.",
+      error:error
+    })
+  }
+};
+
+const resume = async (req, res) => {
+  try {
+    if (!req.file) {
+      return res.status(400).json({
+        success: false,
+        message: "No resume uploaded",
+      });
+    }
+
+    const newResume = new Resume({
+      resume: req.file.path, 
+      fileName: req.file.filename,
+    });
+
+    await newResume.save();
+
+    res.status(200).json({
+      success: true,
+      message: "Resume uploaded successfully",
+      url: req.file.path,
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({
+      success: false,
+      message: "Server error",
+    });
+  }
+};
+
 
 module.exports = {
   adminCreateProfile,
@@ -416,8 +706,16 @@ module.exports = {
   deleteEducation,
   updateEducation,
   addSkill,
+  updateSkill,
+  deleteSkill,
   addTools,
+  updateTool,
+  deleteTool,
   addProject,
+  editproject,
+  deleteProject,
   addCertificate,
+  updateCertificate,
+  deleteCertificate,
   resume,
 };

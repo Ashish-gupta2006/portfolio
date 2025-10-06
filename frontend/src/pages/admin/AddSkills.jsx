@@ -1,9 +1,21 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { useForm } from "react-hook-form";
-import axios from 'axios'
-import{toast} from 'react-toastify'
+import axios from "axios";
+import { toast } from "react-toastify";
 const BACKEND_URL = import.meta.env.VITE_BACKEND_URL;
 const AddSkills = () => {
+  const [edit, setEdit] = useState(false);
+  const [skills, setSkills] = useState([]);
+  const [id, setId] = useState(null);
+
+  const getSkills = async () => {
+    try {
+      const response = await axios.get(`${BACKEND_URL}/portfolio/skill`);
+      setSkills(response.data.data);
+    } catch (error) {
+      console.log(error);
+    }
+  };
   const {
     register,
     handleSubmit,
@@ -12,20 +24,68 @@ const AddSkills = () => {
     formState: { errors, isSubmitting },
   } = useForm();
 
-  const onSubmit = async(data) => {
+  const onSubmit = async (data) => {
     clearErrors();
     try {
-      const response = await axios.post(`${BACKEND_URL}/admin/skills`,data,{withCredentials:true});
-      toast.success(response.data.message); 
-      reset();
+      if (!edit) {
+        const response = await axios.post(`${BACKEND_URL}/admin/skills`, data, {
+          withCredentials: true,
+        });
+        toast.success(response.data.message);
+        reset();
+        getSkills();
+      } else {
+        const response = await axios.put(
+          `${BACKEND_URL}/admin/skills/${id}`,
+          data,
+          {
+            withCredentials: true,
+          }
+        );
+        toast.success(response.data.message);
+        reset({
+          skillName:"",
+          level: "",
+        });
+        getSkills();
+        setEdit(false);
+        setId(null);
+      }
     } catch (error) {
-      if(error.response.data?.errors){
+      if (error.response.data?.errors) {
         toast.error(error.response?.data?.errors);
-      }else{
-        toast.error(error.response?.data?.message|| 'some thing went wrong.');
+      } else {
+        toast.error(error.response?.data?.message || "some thing went wrong.");
       }
     }
   };
+
+  const handleEdit = (skill) => {
+    setEdit(true);
+    setId(skill._id);
+    reset({
+      skillName: skill.skillName,
+      level: skill.level,
+    });
+  };
+
+  const handleDelete = async (id) => {
+    await axios
+      .delete(`${BACKEND_URL}/admin/skills/${id}`, {
+        withCredentials: true,
+      })
+      .then((response) => {
+        toast.success(response.data.message);
+        getSkills();
+      })
+      .catch((error) => {
+        toast.error(error.response?.data?.message || "some thing went wrong.");
+      });
+  };
+
+  useEffect(() => {
+    getSkills();
+  }, []);
   return (
     <div className="w-full p-3 md:p-8 border rounded-lg shadow-lg">
       <div className="w-full ">
@@ -82,13 +142,64 @@ const AddSkills = () => {
               disabled={isSubmitting}
               type="submit"
               className={`w-1/2 md:1/3 py-3 text-white font-semibold  border rounded-xl translate ${
-                isSubmitting ? "bg-slate-500 cursor-not-allowed" : "bg-blue-600 hover:bg-blue-800"
-               } `}
+                isSubmitting
+                  ? "bg-slate-500 cursor-not-allowed"
+                  : "bg-blue-600 hover:bg-blue-800"
+              } `}
             >
               {isSubmitting ? "Submiting..." : "Submit"}
             </button>
           </div>
         </form>
+      </div>
+
+      <div className="mt-10 rounded-2xl ">
+        <table className="table-auto md:table-fixed border-collapse border border-gray-800 w-full rounded-2xl">
+          <thead>
+            <tr>
+              <th className="w-2/3 border border-gray-400 px-4 py-2 text-left">
+                Skill Details
+              </th>
+              <th className="w-1/3 border border-gray-400 px-4 py-2 text-left">
+                Action
+              </th>
+            </tr>
+          </thead>
+          <tbody>
+            {skills.map((skill) => (
+              <tr key={skill._id} className="hover:bg-gray-100">
+                <td className="border border-gray-400 px-4 py-2">
+                  <p>
+                    {" "}
+                    <strong>Skill:- </strong>
+                    {skill.skillName}
+                  </p>
+                  <p>
+                    <strong>Proficiency:- </strong> {skill.level}%
+                  </p>
+                </td>
+                <td className="border border-gray-400 px-4 py-2">
+                  <button
+                    className="bg-red-600 p-2 rounded-xl"
+                    onClick={() => {
+                      handleDelete(skill._id);
+                    }}
+                  >
+                    Delete
+                  </button>
+                  <button
+                    className="ml-4 bg-blue-600 p-2 rounded-xl w-16"
+                    onClick={() => {
+                      handleEdit(skill);
+                    }}
+                  >
+                    Edit
+                  </button>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
       </div>
     </div>
   );

@@ -1,6 +1,7 @@
 const Admin = require('../models/admin.js')
 const bcrypt = require('bcryptjs')
 const jwt = require('jsonwebtoken');
+const { message } = require('../validations/adminProfile.js');
 
 const handleLogin = async (req, res) => {
   try {
@@ -40,6 +41,7 @@ const handleLogin = async (req, res) => {
    sameSite: "None",
    maxAge: 24 * 60 * 60 * 1000,
  });
+ 
     res.status(200).json({
       success: true,
       message: "Login successful",
@@ -54,13 +56,20 @@ const handleLogin = async (req, res) => {
   }
 };
 
-const handleLogout = (req, res)=>{
-  try {
-    
-  } catch (error) {
-    
-  }
-}
+const handleLogout = (req, res) => {
+  res.cookie("twt", "", {
+    httpOnly: true,
+    signed: true,
+    secure: true,
+    sameSite: "None",
+    expires: new Date(0),
+  });
+
+  res.status(200).json({
+    success: true,
+    message: "Logout successfully!",
+  });
+};
 
 
 module.exports = { handleLogin, handleLogout};
